@@ -1,6 +1,6 @@
 <template>
     <div class="lessons">
-      <div class="lesson_folder" v-for="lesson in lessons" :key="lesson.id">
+      <div class="lesson_folder" v-for="lesson in lessonsTest" :key="lesson.id" @click="openFolder(lesson.id)">
         <svg class="cover" version="1.1" id="Capa_1" width="80%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
               viewBox="0 0 408 408" style="enable-background:new 0 0 408 408;" xml:space="preserve">
                 <g>
@@ -20,31 +20,40 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
-  props: {
-    lessons: Array
+  computed: {
+    ...mapGetters(["lessonsTest"]),
   },
+  methods: {
+    ...mapActions(["chooseLesson"]),
+    openFolder(folderId){
+      this.$router.push(`/lesson/${folderId}`) 
+      this.chooseLesson(folderId)
+    }
+  }
 }
 </script>
 
 <style>
   .lessons{
     display: flex;
-    width: 100%;
-    padding: 10px;
+    width: 97%;
     flex-wrap: wrap;
-    column-gap: .5%;
+    column-gap: 1%;
+    margin: 10px auto;
   }
   .lesson_folder{
-    width: 12%;
+    width: 11%;
+    max-width: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: start;
     cursor: pointer;
     padding: 5px;
   }
   .folder_description{
     word-break:break-all;
+    text-align: center;
   }
 </style>

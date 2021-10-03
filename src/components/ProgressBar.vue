@@ -1,10 +1,13 @@
 <template>
-  <progress value="2" max="20"></progress>
+  <progress :value="progressState.progress" :max="progressState.total"></progress>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
-  
+  computed: {
+    ...mapGetters(["progressState"]),
+  },
 }
 </script>
 
@@ -18,5 +21,6 @@ export default {
     height: 4px;
     background: #e1e0de;
     border: none;    
+    transition: all .2s linear;
   }
 </style>

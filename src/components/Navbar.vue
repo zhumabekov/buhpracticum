@@ -1,8 +1,8 @@
 <template>
-  <nav :class="{nav_hide: toogleState}">
+  <nav :class="{nav_hide: toogleNav}">
     <div class="folder__list">
       <ul>
-        <li v-for="lesson in lessons" :key="lesson.id" @click="uncover(lesson.files.length, $event)">
+        <li v-for="lesson in lessonsTest" :key="lesson.id" class="lesson" @click="uncover(lesson.files.length, $event)">
           <div class="folder">
             <svg class="cover" version="1.1" id="Capa_1" width="18px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
               viewBox="0 0 408 408" style="enable-background:new 0 0 408 408;" xml:space="preserve">
@@ -22,11 +22,16 @@
           </div>
           <div class="file__list" data-uncover="">
             <ul>
-              <li v-for="file in lesson.files" :key="file"  class="file">
-                
-                  <svg viewBox="-48 0 448 448" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="m0 440c0 4.417969 3.582031 8 8 8h336c4.417969 0 8-3.582031 8-8v-432c0-4.417969-3.582031-8-8-8h-240v72c0 13.253906-10.746094 24-24 24h-80zm120-306.503906c0-2.9375 1.609375-5.636719 4.191406-7.035156 2.585938-1.398438 5.726563-1.265626 8.183594.339843l138.503906 90.503907c2.261719 1.476562 3.625 3.996093 3.625 6.695312s-1.363281 5.21875-3.625 6.695312l-138.503906 90.503907c-1.296875.855469-2.820312 1.308593-4.375 1.304687-4.417969 0-8-3.582031-8-8zm0 0"/><path d="m136 148.28125v151.4375l115.878906-75.71875zm0 0"/><path d="m88 72v-61.726562l-75.535156 69.726562h67.535156c4.417969 0 8-3.582031 8-8zm0 0"/></svg>
+              <li v-for="file in lesson.files" :key="file.id" class="file" @click="openFile(lesson.id, file.id)">
+                  <svg version="1.1" id="Capa_1" class="file_icon" width="18px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                      viewBox="0 0 298 298" style="enable-background:new 0 0 298 298;" xml:space="preserve">
+                    <path d="M298,33c0-13.255-10.745-24-24-24H24C10.745,9,0,19.745,0,33v232c0,13.255,10.745,24,24,24h250c13.255,0,24-10.745,24-24V33
+                      z M91,39h43v34H91V39z M61,259H30v-34h31V259z M61,73H30V39h31V73z M134,259H91v-34h43V259z M123,176.708v-55.417
+                      c0-8.25,5.868-11.302,12.77-6.783l40.237,26.272c6.902,4.519,6.958,11.914,0.056,16.434l-40.321,26.277
+                      C128.84,188.011,123,184.958,123,176.708z M207,259h-43v-34h43V259z M207,73h-43V39h43V73z M268,259h-31v-34h31V259z M268,73h-31V39
+                      h31V73z"/>
+                  </svg>
                   <a href="#">{{file.name}}</a>
-                 
               </li>
             </ul>
           </div>
@@ -36,32 +41,39 @@
   </nav>
 </template>
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
-  props: {
-    toogleState: Boolean,
-    lessons: Array
-  },
   methods: {
+    ...mapActions(["chooseLesson", "chooseFile"]),
     uncover(length, event){
       let li = event.target.closest('li');
-      let filesBlock = li.querySelector('.file__list')
-      let coverIcon = li.querySelector('.cover')
-      let uncoverIcon = li.querySelector('.uncover')
+      if(li && li.classList.contains('lesson')){
+        let filesBlock = li.querySelector('.file__list')
+        let coverIcon = li.querySelector('.cover')
+        let uncoverIcon = li.querySelector('.uncover')
 
-      if(Boolean(filesBlock.dataset.uncover)){
-        filesBlock.style.height = '0';
-        filesBlock.dataset.uncover = "";
-        uncoverIcon.classList.add('hidden')
-        coverIcon.classList.remove('hidden')
-      }else{
-        filesBlock.style.height = `${length*25}px`;
-        filesBlock.dataset.uncover = "true"
-        coverIcon.classList.add('hidden')
-        uncoverIcon.classList.remove('hidden')
+        if(Boolean(filesBlock.dataset.uncover)){
+          filesBlock.style.height = '0';
+          filesBlock.dataset.uncover = "";
+          uncoverIcon.classList.add('hidden')
+          coverIcon.classList.remove('hidden')
+        }else{
+          filesBlock.style.height = `${length*25}px`;
+          filesBlock.dataset.uncover = "true"
+          coverIcon.classList.add('hidden')
+          uncoverIcon.classList.remove('hidden')
+        }
       }
-      
+    },
+    openFile(folderId, fileId){
+      this.$router.push(`/lesson/${folderId}/${fileId}`)
+      this.chooseLesson(folderId)
+      this.chooseFile(fileId)
     }
-  }
+  },
+  computed: {
+    ...mapGetters(["toogleNav", "lessonsTest"]),
+  },
 }
 </script>
 <style>
